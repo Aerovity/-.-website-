@@ -2,14 +2,15 @@
 
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import SpotlightButton from "@/components/spotlight-button"
+import { useRouter } from "next/navigation"
 
 interface HeroSectionProps {
-  onAuthClick: (mode: "login" | "register") => void
   language: "en" | "fr"
 }
 
-export default function HeroSection({ onAuthClick, language }: HeroSectionProps) {
+export default function HeroSection({ language }: HeroSectionProps) {
+  const router = useRouter()
+
   return (
     <section id="home" className="relative min-h-screen flex items-end justify-center overflow-hidden pb-32">
       {/* Background Image */}
@@ -35,7 +36,13 @@ export default function HeroSection({ onAuthClick, language }: HeroSectionProps)
             {language === "en" ? "Explore Collection" : "Explorer la Collection"}
           </Button>
 
-          <SpotlightButton onAuthClick={onAuthClick} language={language} />
+          <Button
+            size="lg"
+            className="relative overflow-hidden bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white border border-gray-600 px-8 py-3 text-lg transition-all duration-300"
+            onClick={() => router.push("/auth")}
+          >
+            <span className="relative z-10">{language === "en" ? "Get Started Now" : "Commencer Maintenant"}</span>
+          </Button>
         </div>
       </div>
 

@@ -10,14 +10,17 @@ import ThreeDViewer from "@/components/three-d-viewer"
 interface ProductDetailProps {
   productId: number
   onBack: () => void
+  language: "en" | "fr"
 }
 
 const productData = {
   1: {
     name: "Samurai Spirit Tee",
     price: "¥8,900",
-    description:
-      "Embrace the way of the warrior with this premium cotton tee featuring an authentic samurai design. Crafted with attention to detail and Japanese aesthetics.",
+    description: {
+      en: "Embrace the way of the warrior with this premium cotton tee featuring an authentic samurai design. Crafted with attention to detail and Japanese aesthetics.",
+      fr: "Embrassez la voie du guerrier avec ce t-shirt en coton premium présentant un design de samouraï authentique. Conçu avec attention aux détails et à l'esthétique japonaise.",
+    },
     images: [
       "/placeholder.svg?height=600&width=600",
       "/placeholder.svg?height=600&width=600",
@@ -28,8 +31,10 @@ const productData = {
   2: {
     name: "Crow Shadow Hoodie",
     price: "¥12,500",
-    description:
-      "Stay warm in style with this premium hoodie featuring the iconic カラス crow design. Perfect for the modern urban samurai.",
+    description: {
+      en: "Stay warm in style with this premium hoodie featuring the iconic カラス crow design. Perfect for the modern urban samurai.",
+      fr: "Restez au chaud avec style avec ce sweat à capuche premium présentant le design emblématique du corbeau カラス. Parfait pour le samouraï urbain moderne.",
+    },
     images: [
       "/placeholder.svg?height=600&width=600",
       "/placeholder.svg?height=600&width=600",
@@ -40,8 +45,10 @@ const productData = {
   3: {
     name: "Katana Strike Tank",
     price: "¥6,800",
-    description:
-      "Lightweight and breathable tank top with a striking katana design. Perfect for training or casual wear.",
+    description: {
+      en: "Lightweight and breathable tank top with a striking katana design. Perfect for training or casual wear.",
+      fr: "Débardeur léger et respirant avec un design katana saisissant. Parfait pour l'entraînement ou le port décontracté.",
+    },
     images: [
       "/placeholder.svg?height=600&width=600",
       "/placeholder.svg?height=600&width=600",
@@ -52,8 +59,10 @@ const productData = {
   4: {
     name: "Rising Sun Jacket",
     price: "¥18,900",
-    description:
-      "Premium bomber jacket with embroidered rising sun design. A statement piece for the discerning fashion enthusiast.",
+    description: {
+      en: "Premium bomber jacket with embroidered rising sun design. A statement piece for the discerning fashion enthusiast.",
+      fr: "Veste bomber premium avec design de soleil levant brodé. Une pièce de déclaration pour l'amateur de mode exigeant.",
+    },
     images: [
       "/placeholder.svg?height=600&width=600",
       "/placeholder.svg?height=600&width=600",
@@ -64,8 +73,10 @@ const productData = {
   5: {
     name: "Oni Mask Sweatshirt",
     price: "¥11,200",
-    description:
-      "Comfortable sweatshirt featuring a traditional oni mask design. Blend tradition with modern streetwear.",
+    description: {
+      en: "Comfortable sweatshirt featuring a traditional oni mask design. Blend tradition with modern streetwear.",
+      fr: "Sweat-shirt confortable avec un design de masque oni traditionnel. Mélangez tradition et streetwear moderne.",
+    },
     images: [
       "/placeholder.svg?height=600&width=600",
       "/placeholder.svg?height=600&width=600",
@@ -75,7 +86,7 @@ const productData = {
   },
 }
 
-export default function ProductDetail({ productId, onBack }: ProductDetailProps) {
+export default function ProductDetail({ productId, onBack, language }: ProductDetailProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [selectedSize, setSelectedSize] = useState<string>("")
   const [showThreeD, setShowThreeD] = useState(false)
@@ -92,13 +103,52 @@ export default function ProductDetail({ productId, onBack }: ProductDetailProps)
     setCurrentImageIndex((prev) => (prev - 1 + product.images.length) % product.images.length)
   }
 
+  const content = {
+    en: {
+      backToCollection: "Back to Collection",
+      viewIn3D: "View in 3D",
+      backToImages: "Back to Images",
+      selectSize: "Select Size",
+      stockAvailability: "Stock Availability",
+      available: "available",
+      addToCart: "Add to Cart",
+      selectASize: "Select a Size",
+      material: "Material",
+      materialValue: "100% Premium Cotton",
+      careInstructions: "Care Instructions",
+      careValue: "Machine wash cold, tumble dry low",
+      origin: "Origin",
+      originValue: "Designed in Japan",
+      left: "left",
+    },
+    fr: {
+      backToCollection: "Retour à la Collection",
+      viewIn3D: "Voir en 3D",
+      backToImages: "Retour aux Images",
+      selectSize: "Sélectionner la Taille",
+      stockAvailability: "Disponibilité du Stock",
+      available: "disponible",
+      addToCart: "Ajouter au Panier",
+      selectASize: "Sélectionner une Taille",
+      material: "Matériau",
+      materialValue: "100% Coton Premium",
+      careInstructions: "Instructions d'Entretien",
+      careValue: "Lavage en machine à froid, séchage en tambour à basse température",
+      origin: "Origine",
+      originValue: "Conçu au Japon",
+      left: "restant",
+    },
+  }
+
+  const t = content[language]
+
   return (
     <div className="min-h-screen pt-20 pb-10">
       <div className="container mx-auto px-4">
         {/* Back Button */}
         <Button variant="ghost" onClick={onBack} className="mb-8 text-white hover:bg-gray-800">
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Collection
+          {t.backToCollection}
         </Button>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -111,7 +161,7 @@ export default function ProductDetail({ productId, onBack }: ProductDetailProps)
                   onClick={() => setShowThreeD(false)}
                   className="absolute top-4 right-4 bg-black/50 hover:bg-black/70"
                 >
-                  Back to Images
+                  {t.backToImages}
                 </Button>
               </div>
             ) : (
@@ -167,7 +217,7 @@ export default function ProductDetail({ productId, onBack }: ProductDetailProps)
 
                 {/* 3D View Button */}
                 <Button onClick={() => setShowThreeD(true)} className="w-full bg-gray-800 hover:bg-gray-700 text-white">
-                  View in 3D
+                  {t.viewIn3D}
                 </Button>
               </>
             )}
@@ -180,11 +230,11 @@ export default function ProductDetail({ productId, onBack }: ProductDetailProps)
               <p className="text-3xl font-bold text-white">{product.price}</p>
             </div>
 
-            <p className="text-gray-300 text-lg leading-relaxed">{product.description}</p>
+            <p className="text-gray-300 text-lg leading-relaxed">{product.description[language]}</p>
 
             {/* Size Selection */}
             <div>
-              <h3 className="text-xl font-semibold text-white mb-4">Select Size</h3>
+              <h3 className="text-xl font-semibold text-white mb-4">{t.selectSize}</h3>
               <div className="grid grid-cols-4 gap-3">
                 {Object.entries(product.sizes).map(([size, stock]) => (
                   <Button
@@ -198,7 +248,9 @@ export default function ProductDetail({ productId, onBack }: ProductDetailProps)
                   >
                     <div className="text-center">
                       <div className="font-semibold">{size}</div>
-                      <div className="text-xs">{stock} left</div>
+                      <div className="text-xs">
+                        {stock} {t.left}
+                      </div>
                     </div>
                   </Button>
                 ))}
@@ -208,13 +260,13 @@ export default function ProductDetail({ productId, onBack }: ProductDetailProps)
             {/* Stock Info */}
             <Card className="bg-gray-900 border-gray-700">
               <CardContent className="p-4">
-                <h4 className="text-white font-semibold mb-2">Stock Availability</h4>
+                <h4 className="text-white font-semibold mb-2">{t.stockAvailability}</h4>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   {Object.entries(product.sizes).map(([size, stock]) => (
                     <div key={size} className="flex justify-between text-gray-300">
                       <span>Size {size}:</span>
                       <span className={stock > 5 ? "text-green-400" : stock > 0 ? "text-yellow-400" : "text-red-400"}>
-                        {stock} available
+                        {stock} {t.available}
                       </span>
                     </div>
                   ))}
@@ -228,22 +280,22 @@ export default function ProductDetail({ productId, onBack }: ProductDetailProps)
               disabled={!selectedSize}
               className="w-full bg-white text-black hover:bg-gray-200 text-lg py-6"
             >
-              {selectedSize ? `Add to Cart - ${product.price}` : "Select a Size"}
+              {selectedSize ? `${t.addToCart} - ${product.price}` : t.selectASize}
             </Button>
 
             {/* Product Details */}
             <div className="space-y-4 pt-6 border-t border-gray-800">
               <div>
-                <h4 className="text-white font-semibold mb-2">Material</h4>
-                <p className="text-gray-300">100% Premium Cotton</p>
+                <h4 className="text-white font-semibold mb-2">{t.material}</h4>
+                <p className="text-gray-300">{t.materialValue}</p>
               </div>
               <div>
-                <h4 className="text-white font-semibold mb-2">Care Instructions</h4>
-                <p className="text-gray-300">Machine wash cold, tumble dry low</p>
+                <h4 className="text-white font-semibold mb-2">{t.careInstructions}</h4>
+                <p className="text-gray-300">{t.careValue}</p>
               </div>
               <div>
-                <h4 className="text-white font-semibold mb-2">Origin</h4>
-                <p className="text-gray-300">Designed in Japan</p>
+                <h4 className="text-white font-semibold mb-2">{t.origin}</h4>
+                <p className="text-gray-300">{t.originValue}</p>
               </div>
             </div>
           </div>

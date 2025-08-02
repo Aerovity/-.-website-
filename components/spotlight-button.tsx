@@ -1,26 +1,47 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 
 interface SpotlightButtonProps {
-  onAuthClick: (mode: "login" | "register") => void
-  language: "en" | "fr"
+  onAuthClick?: (mode: "login" | "register") => void
+  language?: "en" | "fr"
+  onClick?: () => void
+  children?: React.ReactNode
+  className?: string
 }
 
-export default function SpotlightButton({ onAuthClick, language }: SpotlightButtonProps) {
+export default function SpotlightButton({
+  onAuthClick,
+  language = "en",
+  onClick,
+  children,
+  className = "",
+}: SpotlightButtonProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [showOptions, setShowOptions] = useState(false)
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick()
+    } else if (onAuthClick) {
+      setShowOptions(!showOptions)
+    }
+  }
 
   return (
     <div className="relative">
       <Button
-        className="relative overflow-hidden bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white border border-gray-600 px-6 py-2 transition-all duration-300"
+        className={`relative overflow-hidden bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white border border-gray-600 px-6 py-2 transition-all duration-300 ${className}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={() => setShowOptions(!showOptions)}
+        onClick={handleClick}
       >
-        <span className="relative z-10">{language === "en" ? "Get Started Now" : "Commencer Maintenant"}</span>
+        <span className="relative z-10">
+          {children || (language === "en" ? "Get Started Now" : "Commencer Maintenant")}
+        </span>
 
         {/* Spotlight effect */}
         <div
@@ -31,7 +52,7 @@ export default function SpotlightButton({ onAuthClick, language }: SpotlightButt
       </Button>
 
       {/* Dropdown Options */}
-      {showOptions && (
+      {showOptions && onAuthClick && (
         <div className="absolute top-full mt-2 right-0 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 min-w-[120px]">
           <Button
             variant="ghost"

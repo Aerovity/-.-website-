@@ -3,15 +3,16 @@
 import Image from "next/image"
 import { ShoppingBag, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import SpotlightButton from "@/components/spotlight-button"
+import { useRouter } from "next/navigation"
 
 interface HeaderProps {
-  onAuthClick: (mode: "login" | "register") => void
   language: "en" | "fr"
   toggleLanguage: () => void
 }
 
-export default function Header({ onAuthClick, language, toggleLanguage }: HeaderProps) {
+export default function Header({ language, toggleLanguage }: HeaderProps) {
+  const router = useRouter()
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md border-b border-gray-800">
       <div className="container mx-auto px-4 py-4">
@@ -50,7 +51,12 @@ export default function Header({ onAuthClick, language, toggleLanguage }: Header
               <ShoppingBag className="h-5 w-5" />
             </Button>
 
-            <SpotlightButton onAuthClick={onAuthClick} />
+            <Button
+              className="relative overflow-hidden bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white border border-gray-600 px-6 py-2 transition-all duration-300"
+              onClick={() => router.push("/auth")}
+            >
+              <span className="relative z-10">{language === "en" ? "Get Started" : "Commencer"}</span>
+            </Button>
 
             <Button variant="ghost" size="icon" className="md:hidden text-white hover:bg-gray-800">
               <Menu className="h-5 w-5" />
