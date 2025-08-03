@@ -275,15 +275,15 @@ export default function ProductDetail({ productId, onBack, language }: ProductDe
                     <Button
                       key={size.id}
                       variant={selectedSize === size.size ? "default" : "outline"}
-                      onClick={() => setSelectedSize(size.size)}
+                      onClick={() => setSelectedSize(selectedSize === size.size ? "" : size.size)}
                       disabled={size.stock_quantity === 0}
                       className={`h-12 ${
-                        selectedSize === size.size ? "bg-white text-black" : "border-gray-600 text-white hover:bg-gray-800"
+                        selectedSize === size.size ? "bg-gray-600 text-black" : "bg-gray-700 border-gray-600 text-gray-500 hover:bg-gray-600 hover:text-black"
                       } ${size.stock_quantity === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
                     >
                       <div className="text-center">
-                        <div className="font-semibold">{size.size}</div>
-                        <div className="text-xs">
+                        <div className={`font-semibold ${selectedSize === size.size ? "text-black" : "text-gray-500"}`}>{size.size}</div>
+                        <div className={`text-xs ${selectedSize === size.size ? "text-black" : "text-gray-500"}`}>
                           {size.stock_quantity} {t.left}
                         </div>
                       </div>

@@ -1,6 +1,13 @@
 import { createClient } from '@/utils/supabase/client'
 import { Product, ProductWithDetails } from './types'
 
+// Input validation function for product IDs
+function validateProductId(productId: string): boolean {
+  // UUID v4 format validation
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+  return uuidRegex.test(productId)
+}
+
 export async function getProducts(): Promise<ProductWithDetails[]> {
   const supabase = createClient()
   
@@ -30,6 +37,12 @@ export async function getProducts(): Promise<ProductWithDetails[]> {
 }
 
 export async function getProductWithDetails(productId: string): Promise<ProductWithDetails | null> {
+  // Validate product ID
+  if (!productId || !validateProductId(productId)) {
+    console.error('Invalid product ID format:', productId)
+    return null
+  }
+
   const supabase = createClient()
   
   // Fetch product with all related data
@@ -77,6 +90,10 @@ export function getPrimaryImage(images: any[]): string {
 }
 
 export function getImageUrl(imageUrl: string): string {
+  if (!imageUrl) {
+    return '/placeholder.svg'
+  }
+  
   if (imageUrl.startsWith('http')) {
     return imageUrl
   }
