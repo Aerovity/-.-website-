@@ -2,13 +2,14 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ArrowLeft, Eye, EyeOff } from "lucide-react"
+import { login, signup } from "./actions"
 
 export default function AuthPage() {
   const router = useRouter()
@@ -17,6 +18,8 @@ export default function AuthPage() {
   const [language, setLanguage] = useState<"en" | "fr">("en")
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -73,12 +76,52 @@ export default function AuthPage() {
 
   const t = content[language]
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const errorParam = searchParams.get("error")
+    const messageParam = searchParams.get("message")
+    
+    if (errorParam) {
+      setError(errorParam)
+    }
+    if (messageParam) {
+      setMessage(messageParam)
+    }
+  }, [searchParams])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle authentication logic here
-    console.log("Auth submission:", { mode, formData })
-    // Redirect to home after successful auth
-    router.push("/")
+    setError(null)
+    setMessage(null)
+
+    // Validate form data
+    if (mode === "register") {
+      if (formData.password !== formData.confirmPassword) {
+        setError("Passwords do not match")
+        return
+      }
+      if (formData.password.length < 6) {
+        setError("Password must be at least 6 characters long")
+        return
+      }
+    }
+
+    // Create FormData for server action
+    const formDataObj = new FormData()
+    formDataObj.append("email", formData.email)
+    formDataObj.append("password", formData.password)
+    if (mode === "register") {
+      formDataObj.append("name", formData.name)
+    }
+
+    try {
+      if (mode === "login") {
+        await login(formDataObj)
+      } else {
+        await signup(formDataObj)
+      }
+    } catch (error) {
+      console.error("Auth error:", error)
+    }
   }
 
   const handleInputChange = (field: string, value: string) => {
@@ -142,6 +185,18 @@ export default function AuthPage() {
                     : "Create your account to get started"}
                 </p>
               </div>
+
+              {/* Error/Message Display */}
+              {error && (
+                <div className="p-4 bg-red-900/50 border border-red-700 rounded-lg text-red-200 text-sm">
+                  {error}
+                </div>
+              )}
+              {message && (
+                <div className="p-4 bg-green-900/50 border border-green-700 rounded-lg text-green-200 text-sm">
+                  {message}
+                </div>
+              )}
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-6">
