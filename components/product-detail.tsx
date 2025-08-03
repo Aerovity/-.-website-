@@ -176,7 +176,7 @@ export default function ProductDetail({ productId, onBack, language }: ProductDe
                         src={getImageUrl(product.images[currentImageIndex]?.image_url) || "/placeholder.svg"}
                         alt={`${product.name} - Image ${currentImageIndex + 1}`}
                         fill
-                        className="object-contain bg-gray-900"
+                        className="object-contain bg-black"
                         sizes="(max-width: 768px) 100vw, 50vw"
                       />
                     </div>
@@ -263,7 +263,7 @@ export default function ProductDetail({ productId, onBack, language }: ProductDe
             </div>
 
             {product.description && (
-              <p className="text-gray-300 text-lg leading-relaxed">{product.description}</p>
+              <p className="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap">{product.description}</p>
             )}
 
             {/* Size Selection */}
