@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { ShoppingBag, Menu, User, LogOut } from "lucide-react"
+import { ShoppingBag, Menu, User, LogOut, Package } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -97,6 +97,15 @@ export default function Header({ language, toggleLanguage }: HeaderProps) {
                       title="Account"
                     >
                       <User className="h-5 w-5" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-white hover:bg-gray-800"
+                      onClick={() => router.push("/admin")}
+                      title="Admin Panel"
+                    >
+                      <Package className="h-5 w-5" />
                     </Button>
                     <Button
                       variant="ghost"

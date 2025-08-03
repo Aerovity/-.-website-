@@ -14,7 +14,7 @@ export default function ProductPage() {
   const [authMode, setAuthMode] = useState<"login" | "register">("login")
   const [language, setLanguage] = useState<"en" | "fr">("en")
 
-  const productId = Number.parseInt(params.product as string)
+  const productId = params.product as string
 
   const handleAuthClick = (mode: "login" | "register") => {
     setAuthMode(mode)

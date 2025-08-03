@@ -1,99 +1,91 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ArrowLeft, ChevronLeft, ChevronRight } from "lucide-react"
 import ThreeDViewer from "@/components/three-d-viewer"
+import { getProductWithDetails, formatPrice, getImageUrl } from "@/lib/products"
+import { ProductWithDetails } from "@/lib/types"
 
 interface ProductDetailProps {
-  productId: number
+  productId: string
   onBack: () => void
   language: "en" | "fr"
-}
-
-const productData = {
-  1: {
-    name: "Samurai Spirit Tee",
-    price: "¥8,900",
-    description: {
-      en: "Embrace the way of the warrior with this premium cotton tee featuring an authentic samurai design. Crafted with attention to detail and Japanese aesthetics.",
-      fr: "Embrassez la voie du guerrier avec ce t-shirt en coton premium présentant un design de samouraï authentique. Conçu avec attention aux détails et à l'esthétique japonaise.",
-    },
-    images: [
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-    ],
-    sizes: { S: 12, M: 8, L: 15, XL: 6 },
-  },
-  2: {
-    name: "Crow Shadow Hoodie",
-    price: "¥12,500",
-    description: {
-      en: "Stay warm in style with this premium hoodie featuring the iconic カラス crow design. Perfect for the modern urban samurai.",
-      fr: "Restez au chaud avec style avec ce sweat à capuche premium présentant le design emblématique du corbeau カラス. Parfait pour le samouraï urbain moderne.",
-    },
-    images: [
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-    ],
-    sizes: { S: 5, M: 12, L: 9, XL: 3 },
-  },
-  3: {
-    name: "Katana Strike Tank",
-    price: "¥6,800",
-    description: {
-      en: "Lightweight and breathable tank top with a striking katana design. Perfect for training or casual wear.",
-      fr: "Débardeur léger et respirant avec un design katana saisissant. Parfait pour l'entraînement ou le port décontracté.",
-    },
-    images: [
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-    ],
-    sizes: { S: 20, M: 18, L: 14, XL: 8 },
-  },
-  4: {
-    name: "Rising Sun Jacket",
-    price: "¥18,900",
-    description: {
-      en: "Premium bomber jacket with embroidered rising sun design. A statement piece for the discerning fashion enthusiast.",
-      fr: "Veste bomber premium avec design de soleil levant brodé. Une pièce de déclaration pour l'amateur de mode exigeant.",
-    },
-    images: [
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-    ],
-    sizes: { S: 3, M: 7, L: 5, XL: 2 },
-  },
-  5: {
-    name: "Oni Mask Sweatshirt",
-    price: "¥11,200",
-    description: {
-      en: "Comfortable sweatshirt featuring a traditional oni mask design. Blend tradition with modern streetwear.",
-      fr: "Sweat-shirt confortable avec un design de masque oni traditionnel. Mélangez tradition et streetwear moderne.",
-    },
-    images: [
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-      "/placeholder.svg?height=600&width=600",
-    ],
-    sizes: { S: 8, M: 15, L: 11, XL: 4 },
-  },
 }
 
 export default function ProductDetail({ productId, onBack, language }: ProductDetailProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [selectedSize, setSelectedSize] = useState<string>("")
   const [showThreeD, setShowThreeD] = useState(false)
+  const [product, setProduct] = useState<ProductWithDetails | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const product = productData[productId as keyof typeof productData]
+  useEffect(() => {
+    async function fetchProduct() {
+      try {
+        const productData = await getProductWithDetails(productId)
+        setProduct(productData)
+      } catch (error) {
+        console.error('Error fetching product:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  if (!product) return null
+    fetchProduct()
+  }, [productId])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-20 pb-10">
+        <div className="container mx-auto px-4">
+          <Button variant="ghost" onClick={onBack} className="mb-8 text-white hover:bg-gray-800">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {language === "en" ? "Back to Collection" : "Retour à la Collection"}
+          </Button>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div className="space-y-4">
+              <div className="w-full h-96 lg:h-[500px] bg-gray-800 animate-pulse rounded-lg" />
+              <div className="flex space-x-2">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="w-20 h-20 bg-gray-800 animate-pulse rounded-md" />
+                ))}
+              </div>
+            </div>
+            <div className="space-y-6">
+              <div>
+                <div className="h-8 bg-gray-800 animate-pulse rounded mb-2" />
+                <div className="h-10 bg-gray-800 animate-pulse rounded" />
+              </div>
+              <div className="h-24 bg-gray-800 animate-pulse rounded" />
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen pt-20 pb-10">
+        <div className="container mx-auto px-4">
+          <Button variant="ghost" onClick={onBack} className="mb-8 text-white hover:bg-gray-800">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            {language === "en" ? "Back to Collection" : "Retour à la Collection"}
+          </Button>
+          <div className="text-center py-20">
+            <p className="text-gray-400 text-lg">
+              {language === "en" ? "Product not found." : "Produit introuvable."}
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % product.images.length)
@@ -120,6 +112,7 @@ export default function ProductDetail({ productId, onBack, language }: ProductDe
       origin: "Origin",
       originValue: "Designed in Japan",
       left: "left",
+      noImages: "No images available",
     },
     fr: {
       backToCollection: "Retour à la Collection",
@@ -137,10 +130,17 @@ export default function ProductDetail({ productId, onBack, language }: ProductDe
       origin: "Origine",
       originValue: "Conçu au Japon",
       left: "restant",
+      noImages: "Aucune image disponible",
     },
   }
 
   const t = content[language]
+
+  // Create a map of sizes for easier access
+  const sizeMap = product.sizes.reduce((acc, size) => {
+    acc[size.size] = size.stock_quantity
+    return acc
+  }, {} as Record<string, number>)
 
   return (
     <div className="min-h-screen pt-20 pb-10">
@@ -156,7 +156,10 @@ export default function ProductDetail({ productId, onBack, language }: ProductDe
           <div className="space-y-4">
             {showThreeD ? (
               <div className="relative">
-                <ThreeDViewer productName={product.name} />
+                <ThreeDViewer 
+                  productName={product.name} 
+                  modelUrl={product.models.length > 0 ? product.models[0].model_url : undefined}
+                />
                 <Button
                   onClick={() => setShowThreeD(false)}
                   className="absolute top-4 right-4 bg-black/50 hover:bg-black/70"
@@ -167,58 +170,75 @@ export default function ProductDetail({ productId, onBack, language }: ProductDe
             ) : (
               <>
                 <div className="relative">
-                  <Image
-                    src={product.images[currentImageIndex] || "/placeholder.svg"}
-                    alt={`${product.name} - Image ${currentImageIndex + 1}`}
-                    width={600}
-                    height={600}
-                    className="w-full h-96 lg:h-[500px] object-cover rounded-lg"
-                  />
+                  {product.images.length > 0 ? (
+                    <div className="relative w-full h-96 lg:h-[500px] rounded-lg overflow-hidden">
+                      <Image
+                        src={getImageUrl(product.images[currentImageIndex]?.image_url) || "/placeholder.svg"}
+                        alt={`${product.name} - Image ${currentImageIndex + 1}`}
+                        fill
+                        className="object-contain bg-gray-900"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-full h-96 lg:h-[500px] bg-gray-800 rounded-lg flex items-center justify-center">
+                      <p className="text-gray-400">{t.noImages}</p>
+                    </div>
+                  )}
 
                   {/* Navigation Arrows */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={prevImage}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white"
-                  >
-                    <ChevronLeft className="h-6 w-6" />
-                  </Button>
+                  {product.images.length > 1 && (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={prevImage}
+                        className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white"
+                      >
+                        <ChevronLeft className="h-6 w-6" />
+                      </Button>
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={nextImage}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white"
-                  >
-                    <ChevronRight className="h-6 w-6" />
-                  </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={nextImage}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white"
+                      >
+                        <ChevronRight className="h-6 w-6" />
+                      </Button>
+                    </>
+                  )}
                 </div>
 
                 {/* Thumbnail Images */}
-                <div className="flex space-x-2">
-                  {product.images.map((image, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`relative w-20 h-20 rounded-md overflow-hidden border-2 ${
-                        currentImageIndex === index ? "border-white" : "border-gray-600"
-                      }`}
-                    >
-                      <Image
-                        src={image || "/placeholder.svg"}
-                        alt={`Thumbnail ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </button>
-                  ))}
-                </div>
+                {product.images.length > 0 && (
+                  <div className="flex space-x-2">
+                    {product.images.map((image, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`relative w-20 h-20 rounded-md overflow-hidden border-2 ${
+                          currentImageIndex === index ? "border-white" : "border-gray-600"
+                        }`}
+                      >
+                        <Image
+                          src={getImageUrl(image.image_url) || "/placeholder.svg"}
+                          alt={`Thumbnail ${index + 1}`}
+                          fill
+                          className="object-cover"
+                          sizes="80px"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
 
                 {/* 3D View Button */}
-                <Button onClick={() => setShowThreeD(true)} className="w-full bg-gray-800 hover:bg-gray-700 text-white">
-                  {t.viewIn3D}
-                </Button>
+                {product.models.length > 0 && (
+                  <Button onClick={() => setShowThreeD(true)} className="w-full bg-gray-800 hover:bg-gray-700 text-white">
+                    {t.viewIn3D}
+                  </Button>
+                )}
               </>
             )}
           </div>
@@ -227,60 +247,78 @@ export default function ProductDetail({ productId, onBack, language }: ProductDe
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl lg:text-4xl font-bold text-white mb-2">{product.name}</h1>
-              <p className="text-3xl font-bold text-white">{product.price}</p>
+              <div className="flex items-center gap-4 mb-4">
+                {product.category && (
+                  <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full">
+                    {product.category}
+                  </span>
+                )}
+                {product.brand && (
+                  <span className="text-sm text-gray-400 bg-gray-800 px-3 py-1 rounded-full">
+                    {product.brand}
+                  </span>
+                )}
+              </div>
+              <p className="text-3xl font-bold text-white">{formatPrice(product.price, product.currency)}</p>
             </div>
 
-            <p className="text-gray-300 text-lg leading-relaxed">{product.description[language]}</p>
+            {product.description && (
+              <p className="text-gray-300 text-lg leading-relaxed">{product.description}</p>
+            )}
 
             {/* Size Selection */}
-            <div>
-              <h3 className="text-xl font-semibold text-white mb-4">{t.selectSize}</h3>
-              <div className="grid grid-cols-4 gap-3">
-                {Object.entries(product.sizes).map(([size, stock]) => (
-                  <Button
-                    key={size}
-                    variant={selectedSize === size ? "default" : "outline"}
-                    onClick={() => setSelectedSize(size)}
-                    disabled={stock === 0}
-                    className={`h-12 ${
-                      selectedSize === size ? "bg-white text-black" : "border-gray-600 text-white hover:bg-gray-800"
-                    } ${stock === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
-                  >
-                    <div className="text-center">
-                      <div className="font-semibold">{size}</div>
-                      <div className="text-xs">
-                        {stock} {t.left}
+            {product.sizes.length > 0 && (
+              <div>
+                <h3 className="text-xl font-semibold text-white mb-4">{t.selectSize}</h3>
+                <div className="grid grid-cols-4 gap-3">
+                  {product.sizes.map((size) => (
+                    <Button
+                      key={size.id}
+                      variant={selectedSize === size.size ? "default" : "outline"}
+                      onClick={() => setSelectedSize(size.size)}
+                      disabled={size.stock_quantity === 0}
+                      className={`h-12 ${
+                        selectedSize === size.size ? "bg-white text-black" : "border-gray-600 text-white hover:bg-gray-800"
+                      } ${size.stock_quantity === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+                    >
+                      <div className="text-center">
+                        <div className="font-semibold">{size.size}</div>
+                        <div className="text-xs">
+                          {size.stock_quantity} {t.left}
+                        </div>
                       </div>
-                    </div>
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Stock Info */}
-            <Card className="bg-gray-900 border-gray-700">
-              <CardContent className="p-4">
-                <h4 className="text-white font-semibold mb-2">{t.stockAvailability}</h4>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  {Object.entries(product.sizes).map(([size, stock]) => (
-                    <div key={size} className="flex justify-between text-gray-300">
-                      <span>Size {size}:</span>
-                      <span className={stock > 5 ? "text-green-400" : stock > 0 ? "text-yellow-400" : "text-red-400"}>
-                        {stock} {t.available}
-                      </span>
-                    </div>
+                    </Button>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            )}
+
+            {/* Stock Info */}
+            {product.sizes.length > 0 && (
+              <Card className="bg-gray-900 border-gray-700">
+                <CardContent className="p-4">
+                  <h4 className="text-white font-semibold mb-2">{t.stockAvailability}</h4>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    {product.sizes.map((size) => (
+                      <div key={size.id} className="flex justify-between text-gray-300">
+                        <span>Size {size.size}:</span>
+                        <span className={size.stock_quantity > 5 ? "text-green-400" : size.stock_quantity > 0 ? "text-yellow-400" : "text-red-400"}>
+                          {size.stock_quantity} {t.available}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Order Button */}
             <Button
               size="lg"
-              disabled={!selectedSize}
+              disabled={!selectedSize || product.sizes.length === 0}
               className="w-full bg-white text-black hover:bg-gray-200 text-lg py-6"
             >
-              {selectedSize ? `${t.addToCart} - ${product.price}` : t.selectASize}
+              {selectedSize ? `${t.addToCart} - ${formatPrice(product.price, product.currency)}` : t.selectASize}
             </Button>
 
             {/* Product Details */}
