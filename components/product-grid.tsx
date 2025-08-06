@@ -46,12 +46,12 @@ export default function ProductGrid({ language }: ProductGridProps) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {[...Array(6)].map((_, i) => (
-              <Card key={i} className="bg-gray-900 border-gray-800 animate-pulse">
+              <Card key={i} className="bg-black border-gray-800 animate-pulse">
                 <CardContent className="p-0">
-                  <div className="w-full h-80 bg-gray-800" />
+                  <div className="w-full h-80 bg-gray-900" />
                   <div className="p-6">
-                    <div className="h-6 bg-gray-800 rounded mb-2" />
-                    <div className="h-8 bg-gray-800 rounded" />
+                    <div className="h-6 bg-gray-900 rounded mb-2" />
+                    <div className="h-8 bg-gray-900 rounded" />
                   </div>
                 </CardContent>
               </Card>
@@ -86,7 +86,7 @@ export default function ProductGrid({ language }: ProductGridProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {products.map((product) => (
               <Link key={product.id} href={`/${product.id}`}>
-                <Card className="bg-gray-900 border-gray-800 hover:border-gray-600 transition-all duration-300 cursor-pointer group">
+                <Card className="bg-black border-gray-800 hover:border-gray-600 transition-all duration-300 cursor-pointer group">
                   <CardContent className="p-0">
                     <div className="relative overflow-hidden">
                       <Image
@@ -102,12 +102,12 @@ export default function ProductGrid({ language }: ProductGridProps) {
                       <h3 className="text-xl font-semibold text-white mb-2">{product.name}</h3>
                       <div className="flex items-center justify-between mb-2">
                         {product.category && (
-                          <span className="text-sm text-gray-400 bg-gray-800 px-2 py-1 rounded">
+                          <span className="text-sm text-gray-400 bg-gray-900 px-2 py-1 rounded">
                             {product.category}
                           </span>
                         )}
                         {product.brand && (
-                          <span className="text-sm text-gray-400 bg-gray-800 px-2 py-1 rounded">
+                          <span className="text-sm text-gray-400 bg-gray-900 px-2 py-1 rounded">
                             {product.brand}
                           </span>
                         )}

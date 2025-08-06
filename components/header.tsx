@@ -53,7 +53,7 @@ export default function Header({ language, toggleLanguage }: HeaderProps) {
         <div className="flex items-center justify-between">
           {/* Logo and Brand - Clickable */}
           <button
-            onClick={() => document.getElementById("home")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() => router.push('/')}
             className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
           >
             <Image src="/images/new-crow-logo.png" alt="カラス. Logo" width={40} height={40} className="invert" />
@@ -81,7 +81,12 @@ export default function Header({ language, toggleLanguage }: HeaderProps) {
 
           {/* Actions */}
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" className="text-white hover:bg-gray-800">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-white hover:bg-gray-800"
+              onClick={() => router.push('/cart')}
+            >
               <ShoppingBag className="h-5 w-5" />
             </Button>
 
